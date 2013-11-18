@@ -10,7 +10,7 @@
  */
 
 body {
-  max-width: 750px;
+  max-width: 984px;
   margin: 0 auto;
   padding: 1em;
   font-family: 'Lucida Grande', 'Lucida Sans Unicode', Arial, sans-serif;
@@ -36,6 +36,27 @@ h2,
 .links {
   text-align: center;
 }
+.links a {
+}
+.links a img{
+    margin: 2px;
+    width:60px;
+    height:60px;
+}
+.process {
+    display: block;
+    position: absolute;
+    line-height:40xp;
+    right: 50px;
+}
+.accept_button {
+    top: 100px;
+}
+
+.delete_button {
+    top: 200px;
+}
+
 
 @media (min-width: 481px) {
   .navigation {
