@@ -23,13 +23,15 @@ $(function () {
     var linksContainer = $('#links');
 
     var start = 0;
-    var pageSize = 100;
+    var pageSize = 105;
     var pageNo = 1;
     var tweetIds;
     var tweetSourceKey = "downloaded_image_tweet";
     function getDptids(page) {
         pageNo = Math.max(1, page);
         var start = (pageNo - 1) * pageSize;
+        carouselLinks = [];
+        linksContainer.html("");
         $.ajax({
             url: webdisBaseUrl + "/SORT/" + tweetSourceKey + "/ALPHA/LIMIT/" + start + "/" + pageSize,
             success: function(data) {
@@ -43,8 +45,6 @@ $(function () {
     }
 
     function getTweets(ids) {
-        carouselLinks = [];
-        linksContainer.html("");
         for (var i in ids) {
             (function(tweetId_iIndex){
                 var aa = tweetId_iIndex.split("_");
