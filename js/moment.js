@@ -29,8 +29,6 @@ $(function () {
     var tweetSourceKey = "downloaded_image_tweet";
     function getDptids(page) {
         pageNo = Math.max(1, page);
-        carouselLinks = [];
-        linksContainer.html("");
         var start = (pageNo - 1) * pageSize;
         $.ajax({
             url: webdisBaseUrl + "/SORT/" + tweetSourceKey + "/ALPHA/LIMIT/" + start + "/" + pageSize,
@@ -45,6 +43,8 @@ $(function () {
     }
 
     function getTweets(ids) {
+        carouselLinks = [];
+        linksContainer.html("");
         for (var i in ids) {
             (function(tweetId_iIndex){
                 var aa = tweetId_iIndex.split("_");
@@ -76,18 +76,47 @@ $(function () {
             })(ids[i]);
         }
     }
+    var galleryIsOpen = false;
     $('#blueimp-gallery').on('slide', function (event, index, slide) {
         $("#accept").attr("index", index);
         $("#delete").attr("index", index);
+    }).on('open', function(){
+        galleryIsOpen = true;
+    }).on('close', function(){
+        galleryIsOpen = false;
     });
     $(document).on("keypress", function(event){
-        switch(event.which) {
-            case 97:
-                process($("#accept").attr("index"), true);
-                break;
-            case 100:
-                process($("#delete").attr("index"), false);
-                break;
+        if (galleryIsOpen) {
+            switch(event.which) {
+                case 97://a
+                    process($("#accept").attr("index"), true);
+                    break;
+                case 100://d
+                    process($("#delete").attr("index"), false);
+                    break;
+                case 110://n
+                    $('#blueimp-gallery').data('gallery').next();
+                    break;
+                case 112://p
+                    $('#blueimp-gallery').data('gallery').prev();
+                    break;
+                default:
+                    console.log("keypress: " + event.which);
+            }
+        } else {
+            switch(event.which){
+                case 110://n
+                    getDptids(pageNo+1);
+                    break;
+                case 112://p
+                    getDptids(pageNo-1);
+                    break;
+                case 114://r
+                    getDptids(pageNo);
+                    break;
+                default:
+                    console.log("keypress: " + event.which);
+            }
         }
     });
 
@@ -105,8 +134,9 @@ $(function () {
         var tid = $('#links a').eq(index).attr("tid");
         var iid = $('#links a').eq(index).attr("iid");
         var gotoKey = isAccept ? "accepted_tweet" : "deleted_tweet";
-        $.get(webdisBaseUrl + "/SADD/" + gotoKey + "/" + tid + "_" + iid);
-        $.get(webdisBaseUrl + "/SREM/" + tweetSourceKey + "/" + tid + "_" + iid);
+        $.get(webdisBaseUrl + "/SREM/" + tweetSourceKey + "/" + tid + "_" + iid).done(function(result){
+            $.get(webdisBaseUrl + "/SADD/" + gotoKey + "/" + tid + "_" + iid);
+        });
         var gallery = $('#blueimp-gallery').data('gallery');
         gallery.next();
     }
