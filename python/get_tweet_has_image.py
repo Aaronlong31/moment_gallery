@@ -2,6 +2,7 @@ import requests
 import json
 import redis
 import time
+import re
 
 urltemplate = u"http://open.t.qq.com/api/statuses/public_timeline?pos={0}&reqnum=100&pageflag=0&format=json&access_token=82976016397fd2d0eab4deb74333e0b7&oauth_consumer_key=801058005&openid=506BC4A8346A20A34C4D469A5BD30389&oauth_version=2.a&clientip=116.228.187.90&scope=all&appfrom=php-sdk2.0beta&seqid=1384398531&serverip=183.60.10.172"
 redi = redis.StrictRedis(host='localhost', port=6379, db=0)
@@ -28,7 +29,8 @@ def find():
             count += 1
             redi.hset(info['id'], 'from', info['from'])
             redi.hset(info['id'], 'image', info['image'])
-            redi.hset(info['id'], 'text', info['text'])
+            text = re.sub(r'<[^<>]*>|#[^#]*#|@[^\s]+|\[[^\[\]]*\]', '', info['text'])
+            redi.hset(info['id'], 'text', text)
             redi.hset(info['id'], 'timestamp', info['timestamp'])
             redi.hset(info['id'], 'location', info['location'])
             redi.lpush('newtweet', info['id'])

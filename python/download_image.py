@@ -22,7 +22,12 @@ def process():
         for index, image in enumerate(images):
             tweetId_imageIndex = "%s_%d" % (infoId, index)
             file_name = tweetId_imageIndex + ".jpg"
-            u = urllib2.urlopen(image + '/2000')
+            source = redi.hget(infoId, 'source')
+            if source == 'sina':
+                bigimage = image.replace('thumbnail','large')
+            else:
+                bigimage = image + "/2000"
+            u = urllib2.urlopen(bigimage)
             f = open('images/' + file_name, 'wb')
             #meta = u.info()
             #file_size = int(meta.getheaders('Content-Length')[0])
